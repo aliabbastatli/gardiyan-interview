@@ -1,0 +1,96 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ProductService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.gardiyan.oms.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ProductService (com.gardiyan.oms.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ProductService$MockitoMock$zTtIUnvn</td>
+  </tr>
+  <tr>
+    <td class="name">ProductService$MockitoMock$zTtIUnvn$auxiliary$lADEZyvE</td>
+  </tr>
+  <tr>
+    <td class="name">ProductService$MockitoMock$zTtIUnvn$auxiliary$MKKidMsF</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.gardiyan.oms.service;
+&nbsp;
+&nbsp;import com.gardiyan.oms.dto.request.product.ProductCreateRequest;
+&nbsp;import com.gardiyan.oms.dto.request.product.ProductUpdateRequest;
+&nbsp;import com.gardiyan.oms.dto.response.product.ProductDTO;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;public interface ProductService {
+&nbsp;    ProductDTO createProduct(ProductCreateRequest request);
+&nbsp;    ProductDTO getProductById(UUID id);
+&nbsp;    List&lt;ProductDTO&gt; getAllProducts();
+&nbsp;    ProductDTO updateProduct(UUID id, ProductUpdateRequest request);
+&nbsp;    void deleteProduct(UUID id);
+&nbsp;    ProductDTO updateStock(UUID id, int quantity);
+&nbsp;    List&lt;ProductDTO&gt; getProductsInStock();
+&nbsp;    List&lt;ProductDTO&gt; searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice, Integer minStock);
+&nbsp;} 
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-01-24 22:37</div>
+</div>
+</body>
+</html>

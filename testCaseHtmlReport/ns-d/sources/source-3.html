@@ -1,0 +1,263 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ProductServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.gardiyan.oms.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: ProductServiceImpl (com.gardiyan.oms.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProductServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57,1%
+  </span>
+  <span class="absValue">
+    (8/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98,1%
+  </span>
+  <span class="absValue">
+    (52/53)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ProductServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57,1%
+  </span>
+  <span class="absValue">
+    (8/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98,1%
+  </span>
+  <span class="absValue">
+    (52/53)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.gardiyan.oms.service.impl;
+&nbsp;
+&nbsp;import com.gardiyan.oms.dto.request.product.ProductCreateRequest;
+&nbsp;import com.gardiyan.oms.dto.request.product.ProductUpdateRequest;
+&nbsp;import com.gardiyan.oms.dto.response.product.ProductDTO;
+&nbsp;import com.gardiyan.oms.exception.InsufficientStockException;
+&nbsp;import com.gardiyan.oms.exception.ProductNotFoundException;
+&nbsp;import com.gardiyan.oms.model.Product;
+&nbsp;import com.gardiyan.oms.repository.ProductRepository;
+&nbsp;import com.gardiyan.oms.repository.spec.ProductSpecification;
+&nbsp;import com.gardiyan.oms.service.ProductService;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.data.jpa.domain.Specification;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+&nbsp;@RequiredArgsConstructor
+&nbsp;@Transactional
+&nbsp;public class ProductServiceImpl implements ProductService {
+&nbsp;    private final ProductRepository productRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ProductDTO createProduct(ProductCreateRequest request) {
+<b class="fc">&nbsp;        Product product = new Product();</b>
+<b class="fc">&nbsp;        product.setName(request.getName());</b>
+<b class="fc">&nbsp;        product.setDescription(request.getDescription());</b>
+<b class="fc">&nbsp;        product.setPrice(request.getPrice());</b>
+<b class="fc">&nbsp;        product.setStockQuantity(request.getStockQuantity());</b>
+&nbsp;        
+<b class="fc">&nbsp;        return mapToDTO(productRepository.save(product));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ProductDTO getProductById(UUID id) {
+<b class="fc">&nbsp;        return productRepository.findById(id)</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .orElseThrow(() -&gt; new ProductNotFoundException(&quot;Product not found with id: &quot; + id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ProductDTO&gt; getAllProducts() {
+<b class="fc">&nbsp;        return productRepository.findAll().stream()</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ProductDTO updateProduct(UUID id, ProductUpdateRequest request) {
+<b class="fc">&nbsp;        Product product = productRepository.findById(id)</b>
+<b class="fc">&nbsp;            .orElseThrow(() -&gt; new ProductNotFoundException(&quot;Product not found with id: &quot; + id));</b>
+&nbsp;
+<b class="fc">&nbsp;        product.setName(request.getName());</b>
+<b class="fc">&nbsp;        product.setDescription(request.getDescription());</b>
+<b class="fc">&nbsp;        product.setPrice(request.getPrice());</b>
+<b class="fc">&nbsp;        product.setStockQuantity(request.getStockQuantity());</b>
+&nbsp;
+<b class="fc">&nbsp;        return mapToDTO(productRepository.save(product));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteProduct(UUID id) {
+<b class="fc">&nbsp;        if (!productRepository.existsById(id)) {</b>
+<b class="fc">&nbsp;            throw new ProductNotFoundException(&quot;Product not found with id: &quot; + id);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        productRepository.deleteById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ProductDTO updateStock(UUID id, int quantity) {
+<b class="fc">&nbsp;        Product product = productRepository.findByIdWithLock(id);</b>
+<b class="pc">&nbsp;        if (product == null) {</b>
+<b class="nc">&nbsp;            throw new ProductNotFoundException(&quot;Product not found with id: &quot; + id);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        int newStockQuantity = product.getStockQuantity() + quantity;</b>
+<b class="fc">&nbsp;        if (newStockQuantity &lt; 0) {</b>
+<b class="fc">&nbsp;            throw new InsufficientStockException(</b>
+<b class="fc">&nbsp;                String.format(&quot;Insufficient stock for product %s. Available: %d, Requested: %d&quot;,</b>
+<b class="fc">&nbsp;                    product.getName(), product.getStockQuantity(), Math.abs(quantity))</b>
+&nbsp;            );
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        product.setStockQuantity(newStockQuantity);</b>
+<b class="fc">&nbsp;        return mapToDTO(productRepository.save(product));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ProductDTO&gt; getProductsInStock() {
+<b class="fc">&nbsp;        return productRepository.findByStockQuantityGreaterThan(0).stream()</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ProductDTO&gt; searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice, Integer minStock) {
+<b class="fc">&nbsp;        Specification&lt;Product&gt; spec = Specification.where(null);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (name != null) {</b>
+<b class="fc">&nbsp;            spec = spec.and(ProductSpecification.nameContains(name));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (minPrice != null || maxPrice != null) {</b>
+<b class="fc">&nbsp;            spec = spec.and(ProductSpecification.priceBetween(minPrice, maxPrice));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (minStock != null) {</b>
+<b class="fc">&nbsp;            spec = spec.and(ProductSpecification.stockGreaterThanOrEqual(minStock));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return productRepository.findAll(spec).stream()</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private ProductDTO mapToDTO(Product product) {
+<b class="fc">&nbsp;        ProductDTO dto = new ProductDTO();</b>
+<b class="fc">&nbsp;        dto.setId(product.getId());</b>
+<b class="fc">&nbsp;        dto.setName(product.getName());</b>
+<b class="fc">&nbsp;        dto.setDescription(product.getDescription());</b>
+<b class="fc">&nbsp;        dto.setPrice(product.getPrice());</b>
+<b class="fc">&nbsp;        dto.setStockQuantity(product.getStockQuantity());</b>
+<b class="fc">&nbsp;        dto.setCreatedAt(product.getCreatedAt());</b>
+<b class="fc">&nbsp;        return dto;</b>
+&nbsp;    }
+&nbsp;} 
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-01-24 22:37</div>
+</div>
+</body>
+</html>

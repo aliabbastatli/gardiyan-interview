@@ -1,0 +1,302 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > OrderServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.gardiyan.oms.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: OrderServiceImpl (com.gardiyan.oms.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85,7%
+  </span>
+  <span class="absValue">
+    (12/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98,7%
+  </span>
+  <span class="absValue">
+    (74/75)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">OrderServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85,7%
+  </span>
+  <span class="absValue">
+    (12/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98,7%
+  </span>
+  <span class="absValue">
+    (74/75)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.gardiyan.oms.service.impl;
+&nbsp;
+&nbsp;import com.gardiyan.oms.dto.request.order.OrderCreateRequest;
+&nbsp;import com.gardiyan.oms.dto.request.order.OrderItemRequest;
+&nbsp;import com.gardiyan.oms.dto.request.order.OrderSearchRequest;
+&nbsp;import com.gardiyan.oms.dto.response.order.OrderDTO;
+&nbsp;import com.gardiyan.oms.dto.response.order.OrderItemDTO;
+&nbsp;import com.gardiyan.oms.exception.CustomerNotFoundException;
+&nbsp;import com.gardiyan.oms.exception.InsufficientStockException;
+&nbsp;import com.gardiyan.oms.exception.OrderNotFoundException;
+&nbsp;import com.gardiyan.oms.exception.ProductNotFoundException;
+&nbsp;import com.gardiyan.oms.model.Customer;
+&nbsp;import com.gardiyan.oms.model.Order;
+&nbsp;import com.gardiyan.oms.model.OrderItem;
+&nbsp;import com.gardiyan.oms.model.Product;
+&nbsp;import com.gardiyan.oms.repository.CustomerRepository;
+&nbsp;import com.gardiyan.oms.repository.OrderRepository;
+&nbsp;import com.gardiyan.oms.repository.ProductRepository;
+&nbsp;import com.gardiyan.oms.service.OrderService;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+&nbsp;@RequiredArgsConstructor
+&nbsp;@Transactional
+&nbsp;public class OrderServiceImpl implements OrderService {
+&nbsp;    private final OrderRepository orderRepository;
+&nbsp;    private final CustomerRepository customerRepository;
+&nbsp;    private final ProductRepository productRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public OrderDTO createOrder(OrderCreateRequest request) {
+<b class="fc">&nbsp;        Customer customer = customerRepository.findById(request.getCustomerId())</b>
+<b class="fc">&nbsp;            .orElseThrow(() -&gt; new CustomerNotFoundException(&quot;Customer not found&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        Order order = new Order();</b>
+<b class="fc">&nbsp;        order.setCustomer(customer);</b>
+<b class="fc">&nbsp;        order.setTotalAmount(BigDecimal.ZERO);</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;OrderItem&gt; orderItems = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        BigDecimal totalAmount = BigDecimal.ZERO;</b>
+&nbsp;
+<b class="fc">&nbsp;        for (OrderItemRequest itemRequest : request.getItems()) {</b>
+<b class="fc">&nbsp;            Product product = productRepository.findByIdWithLock(itemRequest.getProductId());</b>
+<b class="fc">&nbsp;            if (product == null) {</b>
+<b class="fc">&nbsp;                throw new ProductNotFoundException(&quot;Product not found: &quot; + itemRequest.getProductId());</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if (product.getStockQuantity() &lt; itemRequest.getQuantity()) {</b>
+<b class="fc">&nbsp;                throw new InsufficientStockException(</b>
+<b class="fc">&nbsp;                    String.format(&quot;Insufficient stock for product %s. Available: %d, Requested: %d&quot;,</b>
+<b class="fc">&nbsp;                        product.getName(), product.getStockQuantity(), itemRequest.getQuantity())</b>
+&nbsp;                );
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            OrderItem orderItem = new OrderItem();</b>
+<b class="fc">&nbsp;            orderItem.setOrder(order);</b>
+<b class="fc">&nbsp;            orderItem.setProduct(product);</b>
+<b class="fc">&nbsp;            orderItem.setQuantity(itemRequest.getQuantity());</b>
+<b class="fc">&nbsp;            orderItem.setPrice(product.getPrice());</b>
+<b class="fc">&nbsp;            orderItem.calculateTotalPrice();</b>
+&nbsp;
+<b class="fc">&nbsp;            orderItems.add(orderItem);</b>
+<b class="fc">&nbsp;            totalAmount = totalAmount.add(orderItem.getTotalPrice());</b>
+&nbsp;
+<b class="fc">&nbsp;            product.setStockQuantity(product.getStockQuantity() - itemRequest.getQuantity());</b>
+<b class="fc">&nbsp;            productRepository.save(product);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        order.setOrderItems(orderItems);</b>
+<b class="fc">&nbsp;        order.setTotalAmount(totalAmount);</b>
+<b class="fc">&nbsp;        Order savedOrder = orderRepository.save(order);</b>
+&nbsp;        
+<b class="fc">&nbsp;        return mapToDTO(savedOrder);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public OrderDTO getOrderById(UUID id) {
+<b class="fc">&nbsp;        return orderRepository.findById(id)</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .orElseThrow(() -&gt; new OrderNotFoundException(&quot;Order not found&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;OrderDTO&gt; getAllOrders() {
+<b class="fc">&nbsp;        return orderRepository.findAll().stream()</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;OrderDTO&gt; getOrdersByCustomerId(UUID customerId) {
+<b class="pc">&nbsp;        if (!customerRepository.existsById(customerId)) {</b>
+<b class="nc">&nbsp;            throw new CustomerNotFoundException(&quot;Customer not found&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return orderRepository.findByCustomerId(customerId).stream()</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;OrderDTO&gt; searchOrders(OrderSearchRequest searchRequest) {
+<b class="pc">&nbsp;        if (searchRequest.getCustomerName() != null &amp;&amp; !searchRequest.getCustomerName().isEmpty()) {</b>
+<b class="fc">&nbsp;            return orderRepository.findByCustomerName(searchRequest.getCustomerName()).stream()</b>
+<b class="fc">&nbsp;                .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return orderRepository.searchOrders(</b>
+<b class="fc">&nbsp;            searchRequest.getCustomerId(),</b>
+<b class="fc">&nbsp;            searchRequest.getStartDate(),</b>
+<b class="fc">&nbsp;            searchRequest.getEndDate()</b>
+<b class="fc">&nbsp;        ).stream()</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteOrder(UUID id) {
+<b class="fc">&nbsp;        Order order = orderRepository.findById(id)</b>
+<b class="fc">&nbsp;            .orElseThrow(() -&gt; new OrderNotFoundException(&quot;Order not found&quot;));</b>
+&nbsp;
+&nbsp;        // Restore product stock quantities
+<b class="fc">&nbsp;        for (OrderItem item : order.getOrderItems()) {</b>
+<b class="fc">&nbsp;            Product product = item.getProduct();</b>
+<b class="fc">&nbsp;            product.setStockQuantity(product.getStockQuantity() + item.getQuantity());</b>
+<b class="fc">&nbsp;            productRepository.save(product);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        orderRepository.deleteById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private OrderDTO mapToDTO(Order order) {
+<b class="fc">&nbsp;        OrderDTO dto = new OrderDTO();</b>
+<b class="fc">&nbsp;        dto.setId(order.getId());</b>
+<b class="fc">&nbsp;        dto.setCustomerId(order.getCustomer().getId());</b>
+<b class="fc">&nbsp;        dto.setTotalAmount(order.getTotalAmount());</b>
+<b class="fc">&nbsp;        dto.setCreatedAt(order.getCreatedAt());</b>
+&nbsp;        
+<b class="fc">&nbsp;        List&lt;OrderItemDTO&gt; itemDTOs = order.getOrderItems().stream()</b>
+<b class="fc">&nbsp;            .map(this::mapToOrderItemDTO)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        dto.setItems(itemDTOs);</b>
+&nbsp;        
+<b class="fc">&nbsp;        return dto;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private OrderItemDTO mapToOrderItemDTO(OrderItem item) {
+<b class="fc">&nbsp;        OrderItemDTO dto = new OrderItemDTO();</b>
+<b class="fc">&nbsp;        dto.setId(item.getId());</b>
+<b class="fc">&nbsp;        dto.setProductId(item.getProduct().getId());</b>
+<b class="fc">&nbsp;        dto.setQuantity(item.getQuantity());</b>
+<b class="fc">&nbsp;        dto.setPrice(item.getPrice());</b>
+<b class="fc">&nbsp;        dto.setTotalPrice(item.getTotalPrice());</b>
+<b class="fc">&nbsp;        return dto;</b>
+&nbsp;    }
+&nbsp;} 
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-01-24 22:37</div>
+</div>
+</body>
+</html>

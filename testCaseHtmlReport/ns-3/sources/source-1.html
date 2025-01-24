@@ -1,0 +1,168 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CustomerController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.gardiyan.oms.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: CustomerController (com.gardiyan.oms.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CustomerController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.gardiyan.oms.controller;
+&nbsp;
+&nbsp;import com.gardiyan.oms.dto.request.customer.CustomerCreateRequest;
+&nbsp;import com.gardiyan.oms.dto.request.customer.CustomerUpdateRequest;
+&nbsp;import com.gardiyan.oms.dto.response.customer.CustomerDTO;
+&nbsp;import com.gardiyan.oms.service.CustomerService;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/customers&quot;)
+&nbsp;@RequiredArgsConstructor
+&nbsp;@Tag(name = &quot;Customer Management&quot;, description = &quot;APIs for managing customers&quot;)
+&nbsp;public class CustomerController {
+&nbsp;    private final CustomerService customerService;
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    @Operation(summary = &quot;Create a new customer&quot;)
+&nbsp;    public ResponseEntity&lt;CustomerDTO&gt; createCustomer(@Valid @RequestBody CustomerCreateRequest request) {
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(customerService.createCustomer(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    @Operation(summary = &quot;Get a customer by ID&quot;)
+&nbsp;    public ResponseEntity&lt;CustomerDTO&gt; getCustomerById(@PathVariable UUID id) {
+<b class="fc">&nbsp;        return ResponseEntity.ok(customerService.getCustomerById(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    @Operation(summary = &quot;Get all customers&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;CustomerDTO&gt;&gt; getAllCustomers() {
+<b class="fc">&nbsp;        return ResponseEntity.ok(customerService.getAllCustomers());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    @Operation(summary = &quot;Update an existing customer&quot;)
+&nbsp;    public ResponseEntity&lt;CustomerDTO&gt; updateCustomer(@PathVariable UUID id, @Valid @RequestBody CustomerUpdateRequest request) {
+<b class="fc">&nbsp;        return ResponseEntity.ok(customerService.updateCustomer(id, request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    @Operation(summary = &quot;Delete a customer&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteCustomer(@PathVariable UUID id) {
+<b class="fc">&nbsp;        customerService.deleteCustomer(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.noContent().build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/search&quot;)
+&nbsp;    @Operation(summary = &quot;Search customers&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;CustomerDTO&gt;&gt; searchCustomers(
+&nbsp;            @RequestParam(required = false) String name,
+&nbsp;            @RequestParam(required = false) String email,
+&nbsp;            @RequestParam(required = false) String phone) {
+<b class="fc">&nbsp;        return ResponseEntity.ok(customerService.searchCustomers(name, email, phone));</b>
+&nbsp;    }
+&nbsp;} 
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-01-24 22:37</div>
+</div>
+</body>
+</html>

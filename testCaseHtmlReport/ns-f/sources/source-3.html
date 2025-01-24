@@ -1,0 +1,95 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CustomerService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.gardiyan.oms.service</a>
+</div>
+
+<h1>Coverage Summary for Class: CustomerService (com.gardiyan.oms.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">CustomerService$MockitoMock$80NEh5rV</td>
+  </tr>
+  <tr>
+    <td class="name">CustomerService$MockitoMock$80NEh5rV$auxiliary$nAZXyZPk</td>
+  </tr>
+  <tr>
+    <td class="name">CustomerService$MockitoMock$80NEh5rV$auxiliary$PAAB9zdd</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.gardiyan.oms.service;
+&nbsp;
+&nbsp;import com.gardiyan.oms.dto.request.customer.CustomerCreateRequest;
+&nbsp;import com.gardiyan.oms.dto.request.customer.CustomerUpdateRequest;
+&nbsp;import com.gardiyan.oms.dto.response.customer.CustomerDTO;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;public interface CustomerService {
+&nbsp;    CustomerDTO createCustomer(CustomerCreateRequest request);
+&nbsp;    CustomerDTO getCustomerById(UUID id);
+&nbsp;    List&lt;CustomerDTO&gt; getAllCustomers();
+&nbsp;    CustomerDTO updateCustomer(UUID id, CustomerUpdateRequest request);
+&nbsp;    void deleteCustomer(UUID id);
+&nbsp;    List&lt;CustomerDTO&gt; searchCustomers(String name, String email, String phone);
+&nbsp;    CustomerDTO getCustomerByEmail(String email);
+&nbsp;} 
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-01-24 22:37</div>
+</div>
+</body>
+</html>

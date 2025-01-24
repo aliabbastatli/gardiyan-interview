@@ -1,0 +1,247 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CustomerServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.gardiyan.oms.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: CustomerServiceImpl (com.gardiyan.oms.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CustomerServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    87,5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93,3%
+  </span>
+  <span class="absValue">
+    (42/45)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CustomerServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    87,5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93,3%
+  </span>
+  <span class="absValue">
+    (42/45)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.gardiyan.oms.service.impl;
+&nbsp;
+&nbsp;import com.gardiyan.oms.dto.request.customer.CustomerCreateRequest;
+&nbsp;import com.gardiyan.oms.dto.request.customer.CustomerUpdateRequest;
+&nbsp;import com.gardiyan.oms.dto.response.customer.CustomerDTO;
+&nbsp;import com.gardiyan.oms.model.Customer;
+&nbsp;import com.gardiyan.oms.repository.CustomerRepository;
+&nbsp;import com.gardiyan.oms.repository.spec.CustomerSpecification;
+&nbsp;import com.gardiyan.oms.service.CustomerService;
+&nbsp;import com.gardiyan.oms.exception.CustomerNotFoundException;
+&nbsp;import com.gardiyan.oms.exception.EmailAlreadyExistsException;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.data.jpa.domain.Specification;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+&nbsp;@RequiredArgsConstructor
+&nbsp;@Transactional
+&nbsp;public class CustomerServiceImpl implements CustomerService {
+&nbsp;    private final CustomerRepository customerRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public CustomerDTO createCustomer(CustomerCreateRequest request) {
+<b class="fc">&nbsp;        if (customerRepository.existsByEmail(request.getEmail())) {</b>
+<b class="fc">&nbsp;            throw new EmailAlreadyExistsException(&quot;Email already exists&quot;);</b>
+&nbsp;        }
+&nbsp;        
+<b class="fc">&nbsp;        Customer customer = new Customer();</b>
+<b class="fc">&nbsp;        customer.setFirstName(request.getFirstName());</b>
+<b class="fc">&nbsp;        customer.setLastName(request.getLastName());</b>
+<b class="fc">&nbsp;        customer.setEmail(request.getEmail());</b>
+<b class="fc">&nbsp;        customer.setPhone(request.getPhone());</b>
+&nbsp;        
+<b class="fc">&nbsp;        return mapToDTO(customerRepository.save(customer));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public CustomerDTO getCustomerById(UUID id) {
+<b class="fc">&nbsp;        return customerRepository.findById(id)</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .orElseThrow(() -&gt; new CustomerNotFoundException(&quot;Customer not found&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;CustomerDTO&gt; getAllCustomers() {
+<b class="fc">&nbsp;        return customerRepository.findAll().stream()</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public CustomerDTO updateCustomer(UUID id, CustomerUpdateRequest request) {
+<b class="fc">&nbsp;        Customer customer = customerRepository.findById(id)</b>
+<b class="fc">&nbsp;            .orElseThrow(() -&gt; new CustomerNotFoundException(&quot;Customer not found&quot;));</b>
+&nbsp;            
+<b class="fc">&nbsp;        customer.setFirstName(request.getFirstName());</b>
+<b class="fc">&nbsp;        customer.setLastName(request.getLastName());</b>
+<b class="fc">&nbsp;        customer.setEmail(request.getEmail());</b>
+<b class="fc">&nbsp;        customer.setPhone(request.getPhone());</b>
+&nbsp;        
+<b class="fc">&nbsp;        return mapToDTO(customerRepository.save(customer));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteCustomer(UUID id) {
+<b class="fc">&nbsp;        if (!customerRepository.existsById(id)) {</b>
+<b class="fc">&nbsp;            throw new CustomerNotFoundException(&quot;Customer not found&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        customerRepository.deleteById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;CustomerDTO&gt; searchCustomers(String name, String email, String phone) {
+<b class="fc">&nbsp;        Specification&lt;Customer&gt; spec = Specification.where(null);</b>
+&nbsp;        
+<b class="pc">&nbsp;        if (name != null) {</b>
+<b class="fc">&nbsp;            spec = spec.and(CustomerSpecification.firstNameContains(name)</b>
+<b class="fc">&nbsp;                .or(CustomerSpecification.lastNameContains(name)));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (email != null) {</b>
+<b class="fc">&nbsp;            spec = spec.and(CustomerSpecification.hasEmail(email));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (phone != null) {</b>
+<b class="fc">&nbsp;            spec = spec.and(CustomerSpecification.phoneContains(phone));</b>
+&nbsp;        }
+&nbsp;        
+<b class="fc">&nbsp;        return customerRepository.findAll(spec).stream()</b>
+<b class="fc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public CustomerDTO getCustomerByEmail(String email) {
+<b class="nc">&nbsp;        return customerRepository.findByEmail(email)</b>
+<b class="nc">&nbsp;            .map(this::mapToDTO)</b>
+<b class="nc">&nbsp;            .orElseThrow(() -&gt; new CustomerNotFoundException(&quot;Customer not found&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private CustomerDTO mapToDTO(Customer customer) {
+<b class="fc">&nbsp;        CustomerDTO dto = new CustomerDTO();</b>
+<b class="fc">&nbsp;        dto.setId(customer.getId());</b>
+<b class="fc">&nbsp;        dto.setFirstName(customer.getFirstName());</b>
+<b class="fc">&nbsp;        dto.setLastName(customer.getLastName());</b>
+<b class="fc">&nbsp;        dto.setEmail(customer.getEmail());</b>
+<b class="fc">&nbsp;        dto.setPhone(customer.getPhone());</b>
+<b class="fc">&nbsp;        return dto;</b>
+&nbsp;    }
+&nbsp;} 
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-01-24 22:37</div>
+</div>
+</body>
+</html>
