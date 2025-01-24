@@ -8,6 +8,7 @@ import com.gardiyan.oms.repository.CustomerRepository;
 import com.gardiyan.oms.repository.spec.CustomerSpecification;
 import com.gardiyan.oms.service.CustomerService;
 import com.gardiyan.oms.exception.CustomerNotFoundException;
+import com.gardiyan.oms.exception.EmailAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO createCustomer(CustomerCreateRequest request) {
         if (customerRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new EmailAlreadyExistsException("Email already exists");
         }
         
         Customer customer = new Customer();

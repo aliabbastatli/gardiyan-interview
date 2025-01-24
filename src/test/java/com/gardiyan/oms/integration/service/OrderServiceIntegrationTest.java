@@ -217,8 +217,8 @@ class OrderServiceIntegrationTest {
     @Test
     void deleteOrder_Success() {
         // Given
+        int initialStock = product.getStockQuantity(); // Get initial stock before creating order
         OrderDTO order = orderService.createOrder(createRequest);
-        int initialStock = product.getStockQuantity();
 
         // When
         orderService.deleteOrder(order.getId());

@@ -3,6 +3,7 @@ package com.gardiyan.oms.service.impl;
 import com.gardiyan.oms.dto.request.product.ProductCreateRequest;
 import com.gardiyan.oms.dto.request.product.ProductUpdateRequest;
 import com.gardiyan.oms.dto.response.product.ProductDTO;
+import com.gardiyan.oms.exception.InsufficientStockException;
 import com.gardiyan.oms.exception.ProductNotFoundException;
 import com.gardiyan.oms.model.Product;
 import com.gardiyan.oms.repository.ProductRepository;
@@ -77,7 +78,15 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductNotFoundException("Product not found with id: " + id);
         }
 
-        product.setStockQuantity(product.getStockQuantity() + quantity);
+        int newStockQuantity = product.getStockQuantity() + quantity;
+        if (newStockQuantity < 0) {
+            throw new InsufficientStockException(
+                String.format("Insufficient stock for product %s. Available: %d, Requested: %d",
+                    product.getName(), product.getStockQuantity(), Math.abs(quantity))
+            );
+        }
+
+        product.setStockQuantity(newStockQuantity);
         return mapToDTO(productRepository.save(product));
     }
 

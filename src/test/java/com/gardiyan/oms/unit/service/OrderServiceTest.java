@@ -218,6 +218,7 @@ class OrderServiceTest {
     @Test
     void getOrdersByCustomerId_Success() {
         // Given
+        when(customerRepository.existsById(customerId)).thenReturn(true);
         when(orderRepository.findByCustomerId(customerId)).thenReturn(List.of(order));
 
         // When
@@ -229,6 +230,7 @@ class OrderServiceTest {
         assertEquals(orderId, result.get(0).getId());
         assertEquals(customerId, result.get(0).getCustomerId());
         verify(orderRepository).findByCustomerId(customerId);
+        verify(customerRepository).existsById(customerId);
     }
 
     @Test
