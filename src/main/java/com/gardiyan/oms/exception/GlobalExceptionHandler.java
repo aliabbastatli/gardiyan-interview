@@ -1,24 +1,54 @@
 package com.gardiyan.oms.exception;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.List;
-import java.util.Set;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    protected ResponseEntity<Object> handleCustomerNotFound(CustomerNotFoundException ex) {
+        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    protected ResponseEntity<Object> handleProductNotFound(ProductNotFoundException ex) {
+        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    protected ResponseEntity<Object> handleOrderNotFound(OrderNotFoundException ex) {
+        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    protected ResponseEntity<Object> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    protected ResponseEntity<Object> handleInsufficientStock(InsufficientStockException ex) {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
 
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex) {
@@ -39,12 +69,9 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
         apiError.setMessage("Validation error");
         
-        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-        for (FieldError fieldError : fieldErrors) {
-            apiError.addValidationError(
-                String.format("%s: %s", fieldError.getField(), fieldError.getDefaultMessage())
-            );
-        }
+        ex.getBindingResult().getFieldErrors().forEach(fieldError -> 
+            apiError.addValidationError(String.format("%s: %s", fieldError.getField(), fieldError.getDefaultMessage()))
+        );
         
         return buildResponseEntity(apiError);
     }
@@ -54,12 +81,9 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
         apiError.setMessage("Validation error");
         
-        Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
-        for (ConstraintViolation<?> violation : violations) {
-            apiError.addValidationError(
-                String.format("%s: %s", violation.getPropertyPath(), violation.getMessage())
-            );
-        }
+        ex.getConstraintViolations().forEach(violation -> 
+            apiError.addValidationError(String.format("%s: %s", violation.getPropertyPath(), violation.getMessage()))
+        );
         
         return buildResponseEntity(apiError);
     }

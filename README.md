@@ -41,15 +41,15 @@ CREATE DATABASE oms_db;
 2. Configure database connection in `src/main/resources/application.properties`:
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/oms_db
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+spring.datasource.username=postgres
+spring.datasource.password=postgres
 ```
 
 ### Building and Running
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/order-management-system.git
+git clone https://github.com/aliabbastatli/order-management-system.git
 cd order-management-system
 ```
 
@@ -180,7 +180,3 @@ The project includes:
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License. 

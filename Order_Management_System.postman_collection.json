@@ -1,0 +1,299 @@
+{
+    "info": {
+        "name": "Order Management System",
+        "description": "Collection for testing OMS API endpoints",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Customer Management",
+            "item": [
+                {
+                    "name": "Create Customer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/customers",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "customers"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"phone\": \"+90 555 123 4567\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Get Customer by ID",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/api/customers/{{customer_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "customers", "{{customer_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Customers",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/api/customers",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "customers"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Customer",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/customers/{{customer_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "customers", "{{customer_id}}"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"phone\": \"+90 555 123 4567\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Customer",
+                    "request": {
+                        "method": "DELETE",
+                        "url": {
+                            "raw": "{{base_url}}/api/customers/{{customer_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "customers", "{{customer_id}}"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Product Management",
+            "item": [
+                {
+                    "name": "Create Product",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Smartphone\",\n    \"description\": \"Latest model smartphone\",\n    \"price\": 999.99,\n    \"stockQuantity\": 50\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Get Product by ID",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/api/products/{{product_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products", "{{product_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Products",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/api/products",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Product",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products/{{product_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products", "{{product_id}}"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Smartphone\",\n    \"description\": \"Updated smartphone model\",\n    \"price\": 899.99,\n    \"stockQuantity\": 45\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Update Product Stock",
+                    "request": {
+                        "method": "PATCH",
+                        "url": {
+                            "raw": "{{base_url}}/api/products/{{product_id}}/stock?quantity=10",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products", "{{product_id}}", "stock"],
+                            "query": [
+                                {
+                                    "key": "quantity",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Products in Stock",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/api/products/in-stock",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "products", "in-stock"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Order Management",
+            "item": [
+                {
+                    "name": "Create Order",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/orders",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "orders"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"customerId\": \"{{customer_id}}\",\n    \"orderItems\": [\n        {\n            \"productId\": \"{{product_id}}\",\n            \"quantity\": 2\n        }\n    ]\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Get Order by ID",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/api/orders/{{order_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "orders", "{{order_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Orders",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/api/orders",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "orders"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Orders by Customer",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/api/orders/customer/{{customer_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "orders", "customer", "{{customer_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Search Orders",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/api/orders/search?customerName=John&startDate=2024-01-01T00:00:00&endDate=2024-12-31T23:59:59",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "orders", "search"],
+                            "query": [
+                                {
+                                    "key": "customerName",
+                                    "value": "John"
+                                },
+                                {
+                                    "key": "startDate",
+                                    "value": "2024-01-01T00:00:00"
+                                },
+                                {
+                                    "key": "endDate",
+                                    "value": "2024-12-31T23:59:59"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Order",
+                    "request": {
+                        "method": "DELETE",
+                        "url": {
+                            "raw": "{{base_url}}/api/orders/{{order_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "orders", "{{order_id}}"]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080"
+        },
+        {
+            "key": "customer_id",
+            "value": "your-customer-id"
+        },
+        {
+            "key": "product_id",
+            "value": "your-product-id"
+        },
+        {
+            "key": "order_id",
+            "value": "your-order-id"
+        }
+    ]
+} 

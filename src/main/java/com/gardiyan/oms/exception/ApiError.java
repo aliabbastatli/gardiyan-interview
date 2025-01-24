@@ -1,14 +1,16 @@
 package com.gardiyan.oms.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class ApiError {
     private HttpStatus status;
     
@@ -17,11 +19,11 @@ public class ApiError {
     
     private String message;
     private String debugMessage;
-    private List<String> errors;
+    private List<String> validationErrors;
 
     private ApiError() {
         timestamp = LocalDateTime.now();
-        errors = new ArrayList<>();
+        validationErrors = new ArrayList<>();
     }
 
     public ApiError(HttpStatus status) {
@@ -43,9 +45,9 @@ public class ApiError {
     }
 
     public void addValidationError(String error) {
-        if (errors == null) {
-            errors = new ArrayList<>();
+        if (validationErrors == null) {
+            validationErrors = new ArrayList<>();
         }
-        errors.add(error);
+        validationErrors.add(error);
     }
 } 

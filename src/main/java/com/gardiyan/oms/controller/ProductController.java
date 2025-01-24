@@ -1,6 +1,8 @@
 package com.gardiyan.oms.controller;
 
-import com.gardiyan.oms.dto.ProductDTO;
+import com.gardiyan.oms.dto.request.product.ProductCreateRequest;
+import com.gardiyan.oms.dto.request.product.ProductUpdateRequest;
+import com.gardiyan.oms.dto.response.product.ProductDTO;
 import com.gardiyan.oms.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,28 +25,13 @@ public class ProductController {
 
     @PostMapping
     @Operation(summary = "Create a new product")
-    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDTO) {
-        return new ResponseEntity<>(productService.createProduct(productDTO), HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    @Operation(summary = "Update an existing product")
-    public ResponseEntity<ProductDTO> updateProduct(
-            @PathVariable UUID id,
-            @Valid @RequestBody ProductDTO productDTO) {
-        return ResponseEntity.ok(productService.updateProduct(id, productDTO));
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a product")
-    public ResponseEntity<Void> deleteProduct(@PathVariable UUID id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductCreateRequest request) {
+        return new ResponseEntity<>(productService.createProduct(request), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a product by ID")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable UUID id) {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable UUID id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
@@ -53,18 +41,38 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
+    @PutMapping("/{id}")
+    @Operation(summary = "Update an existing product")
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable UUID id, @Valid @RequestBody ProductUpdateRequest request) {
+        return ResponseEntity.ok(productService.updateProduct(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a product")
+    public ResponseEntity<Void> deleteProduct(@PathVariable UUID id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/{id}/stock")
     @Operation(summary = "Update product stock quantity")
-    public ResponseEntity<Void> updateStock(
-            @PathVariable UUID id,
-            @RequestParam int quantity) {
-        productService.updateStock(id, quantity);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ProductDTO> updateStock(@PathVariable UUID id, @RequestParam int quantity) {
+        return ResponseEntity.ok(productService.updateStock(id, quantity));
     }
 
     @GetMapping("/in-stock")
     @Operation(summary = "Get all products in stock")
     public ResponseEntity<List<ProductDTO>> getProductsInStock() {
         return ResponseEntity.ok(productService.getProductsInStock());
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Search products")
+    public ResponseEntity<List<ProductDTO>> searchProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Integer minStock) {
+        return ResponseEntity.ok(productService.searchProducts(name, minPrice, maxPrice, minStock));
     }
 } 

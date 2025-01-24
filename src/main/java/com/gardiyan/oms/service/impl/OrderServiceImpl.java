@@ -1,8 +1,14 @@
 package com.gardiyan.oms.service.impl;
 
-import com.gardiyan.oms.dto.OrderDTO;
-import com.gardiyan.oms.dto.OrderItemDTO;
-import com.gardiyan.oms.dto.OrderSearchDTO;
+import com.gardiyan.oms.dto.request.order.OrderCreateRequest;
+import com.gardiyan.oms.dto.request.order.OrderItemRequest;
+import com.gardiyan.oms.dto.request.order.OrderSearchRequest;
+import com.gardiyan.oms.dto.response.order.OrderDTO;
+import com.gardiyan.oms.dto.response.order.OrderItemDTO;
+import com.gardiyan.oms.exception.CustomerNotFoundException;
+import com.gardiyan.oms.exception.InsufficientStockException;
+import com.gardiyan.oms.exception.OrderNotFoundException;
+import com.gardiyan.oms.exception.ProductNotFoundException;
 import com.gardiyan.oms.model.Customer;
 import com.gardiyan.oms.model.Order;
 import com.gardiyan.oms.model.OrderItem;
@@ -11,7 +17,6 @@ import com.gardiyan.oms.repository.CustomerRepository;
 import com.gardiyan.oms.repository.OrderRepository;
 import com.gardiyan.oms.repository.ProductRepository;
 import com.gardiyan.oms.service.OrderService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +36,9 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
 
     @Override
-    public OrderDTO createOrder(OrderDTO orderDTO) {
-        Customer customer = customerRepository.findById(orderDTO.getCustomerId())
-            .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+    public OrderDTO createOrder(OrderCreateRequest request) {
+        Customer customer = customerRepository.findById(request.getCustomerId())
+            .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
 
         Order order = new Order();
         order.setCustomer(customer);
@@ -42,38 +47,37 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal totalAmount = BigDecimal.ZERO;
 
-        for (OrderItemDTO itemDTO : orderDTO.getOrderItems()) {
-            Product product = productRepository.findByIdWithLock(itemDTO.getProductId());
+        for (OrderItemRequest itemRequest : request.getItems()) {
+            Product product = productRepository.findByIdWithLock(itemRequest.getProductId());
             if (product == null) {
-                throw new EntityNotFoundException("Product not found: " + itemDTO.getProductId());
+                throw new ProductNotFoundException("Product not found: " + itemRequest.getProductId());
             }
 
-            if (product.getStockQuantity() < itemDTO.getQuantity()) {
-                throw new IllegalArgumentException(
+            if (product.getStockQuantity() < itemRequest.getQuantity()) {
+                throw new InsufficientStockException(
                     String.format("Insufficient stock for product %s. Available: %d, Requested: %d",
-                        product.getName(), product.getStockQuantity(), itemDTO.getQuantity())
+                        product.getName(), product.getStockQuantity(), itemRequest.getQuantity())
                 );
             }
 
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setProduct(product);
-            orderItem.setQuantity(itemDTO.getQuantity());
+            orderItem.setQuantity(itemRequest.getQuantity());
             orderItem.setPrice(product.getPrice());
             orderItem.calculateTotalPrice();
 
             orderItems.add(orderItem);
             totalAmount = totalAmount.add(orderItem.getTotalPrice());
 
-            // Update product stock
-            product.setStockQuantity(product.getStockQuantity() - itemDTO.getQuantity());
+            product.setStockQuantity(product.getStockQuantity() - itemRequest.getQuantity());
             productRepository.save(product);
         }
 
         order.setOrderItems(orderItems);
         order.setTotalAmount(totalAmount);
         Order savedOrder = orderRepository.save(order);
-
+        
         return mapToDTO(savedOrder);
     }
 
@@ -82,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO getOrderById(UUID id) {
         return orderRepository.findById(id)
             .map(this::mapToDTO)
-            .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+            .orElseThrow(() -> new OrderNotFoundException("Order not found"));
     }
 
     @Override
@@ -96,6 +100,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderDTO> getOrdersByCustomerId(UUID customerId) {
+        if (!customerRepository.existsById(customerId)) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
         return orderRepository.findByCustomerId(customerId).stream()
             .map(this::mapToDTO)
             .collect(Collectors.toList());
@@ -103,17 +110,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> searchOrders(OrderSearchDTO searchDTO) {
-        if (searchDTO.getCustomerName() != null && !searchDTO.getCustomerName().isEmpty()) {
-            return orderRepository.findByCustomerName(searchDTO.getCustomerName()).stream()
+    public List<OrderDTO> searchOrders(OrderSearchRequest searchRequest) {
+        if (searchRequest.getCustomerName() != null && !searchRequest.getCustomerName().isEmpty()) {
+            return orderRepository.findByCustomerName(searchRequest.getCustomerName()).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
         }
 
         return orderRepository.searchOrders(
-            searchDTO.getCustomerId(),
-            searchDTO.getStartDate(),
-            searchDTO.getEndDate()
+            searchRequest.getCustomerId(),
+            searchRequest.getStartDate(),
+            searchRequest.getEndDate()
         ).stream()
             .map(this::mapToDTO)
             .collect(Collectors.toList());
@@ -122,7 +129,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrder(UUID id) {
         Order order = orderRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+            .orElseThrow(() -> new OrderNotFoundException("Order not found"));
 
         // Restore product stock quantities
         for (OrderItem item : order.getOrderItems()) {
@@ -144,7 +151,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItemDTO> itemDTOs = order.getOrderItems().stream()
             .map(this::mapToOrderItemDTO)
             .collect(Collectors.toList());
-        dto.setOrderItems(itemDTOs);
+        dto.setItems(itemDTOs);
         
         return dto;
     }
